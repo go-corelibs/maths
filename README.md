@@ -14,7 +14,7 @@ maths is a packge for general purpose mathematics and other number-type things.
 
 # Description
 
-## Push/Pop
+## Clamp, ToInt
 
 ``` go
 func main() {
