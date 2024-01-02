@@ -1,4 +1,4 @@
-module github.com/go-curses/corelibs/maths
+module github.com/go-corelibs/maths
 
 go 1.21.0
 
