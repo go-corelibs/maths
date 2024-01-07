@@ -2,9 +2,9 @@
 [![codecov](https://codecov.io/gh/go-corelibs/maths/graph/badge.svg?token=0LMMOkCFIX)](https://codecov.io/gh/go-corelibs/maths)
 [![Go Report Card](https://goreportcard.com/badge/github.com/go-corelibs/maths)](https://goreportcard.com/report/github.com/go-corelibs/maths)
 
-# go-corelibs/maths - mathematics and number-type utilities
+# maths - mathematics and number-type utilities
 
-maths is a packge for general purpose mathematics and other number-type things.
+maths is a package for general purpose mathematics and other number-type things.
 
 # Installation
 
@@ -12,7 +12,7 @@ maths is a packge for general purpose mathematics and other number-type things.
 > go get github.com/go-corelibs/maths@latest
 ```
 
-# Description
+# Examples
 
 ## Clamp, ToInt
 
