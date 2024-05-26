@@ -15,6 +15,8 @@
 package maths
 
 import (
+	"fmt"
+	"math"
 	"testing"
 
 	. "github.com/smartystreets/goconvey/convey"
@@ -22,95 +24,163 @@ import (
 
 func TestAs(t *testing.T) {
 
-	Convey("As Int, Uint, Int64, Uint64", t, func() {
-		So(AsInt(1.0), ShouldEqual, int(1))
-		So(AsUint(1.0), ShouldEqual, uint(1))
-		So(AsInt64(1.0), ShouldEqual, int64(1))
-		So(AsUint64(1.0), ShouldEqual, uint64(1))
+	Convey("As Int, Uint, Int64, Uint64, Float32, Float64", t, func() {
+		So(AsInt(10.01), ShouldEqual, int(10))
+		So(AsUint(10.01), ShouldEqual, uint(10))
+		So(AsInt64(10.01), ShouldEqual, int64(10))
+		So(AsUint64(10.01), ShouldEqual, uint64(10))
+		So(AsFloat32(10.01), ShouldEqual, float32(10.01))
+		So(AsFloat64(10.01), ShouldEqual, float64(10.01))
 	})
 
 	Convey("Atoi", t, func() {
 		So(Atoi("10"), ShouldEqual, 10)
+		So(Atoi("nope"), ShouldEqual, math.MaxInt)
+		So(Atoi("nope", 1010), ShouldEqual, 1010)
 	})
 
 	Convey("ToInt", t, func() {
-		So(ToInt(int(1), 0), ShouldEqual, 1)
-		So(ToInt(int8(1), 0), ShouldEqual, 1)
-		So(ToInt(int16(1), 0), ShouldEqual, 1)
-		So(ToInt(int32(1), 0), ShouldEqual, 1)
-		So(ToInt(int64(1), 0), ShouldEqual, 1)
-		So(ToInt(uint(1), 0), ShouldEqual, 1)
-		So(ToInt(uint8(1), 0), ShouldEqual, 1)
-		So(ToInt(uint16(1), 0), ShouldEqual, 1)
-		So(ToInt(uint32(1), 0), ShouldEqual, 1)
-		So(ToInt(uint64(1), 0), ShouldEqual, 1)
-		So(ToInt(float32(1), 0), ShouldEqual, 1)
-		So(ToInt(float64(1), 0), ShouldEqual, 1)
-		So(ToInt("1", 0), ShouldEqual, 0)
+
+		for idx, test := range []struct {
+			input  interface{}
+			def    []int
+			output int
+		}{
+			{int(1), []int{0}, 1},
+			{int8(1), []int{0}, 1},
+			{int16(1), []int{0}, 1},
+			{int32(1), []int{0}, 1},
+			{int64(1), []int{0}, 1},
+			{uint(1), []int{0}, 1},
+			{uint8(1), []int{0}, 1},
+			{uint16(1), []int{0}, 1},
+			{uint32(1), []int{0}, 1},
+			{uint64(1), []int{0}, 1},
+			{float32(1), []int{0}, 1},
+			{float64(1), []int{0}, 1},
+			{"10", []int{0}, 10},
+			{[]byte("10"), []int{0}, 10},
+			{"nope", []int{1010}, 1010},
+			{"nope", nil, math.MaxInt},
+		} {
+			SoMsg(fmt.Sprintf("test #%d", idx), ToInt(test.input, test.def...), ShouldEqual, test.output)
+		}
+
 	})
 
 	Convey("ToInt64", t, func() {
-		So(ToInt64(int(1), 0), ShouldEqual, int64(1))
-		So(ToInt64(int8(1), 0), ShouldEqual, int64(1))
-		So(ToInt64(int16(1), 0), ShouldEqual, int64(1))
-		So(ToInt64(int32(1), 0), ShouldEqual, int64(1))
-		So(ToInt64(int64(1), 0), ShouldEqual, int64(1))
-		So(ToInt64(uint(1), 0), ShouldEqual, int64(1))
-		So(ToInt64(uint8(1), 0), ShouldEqual, int64(1))
-		So(ToInt64(uint16(1), 0), ShouldEqual, int64(1))
-		So(ToInt64(uint32(1), 0), ShouldEqual, int64(1))
-		So(ToInt64(uint64(1), 0), ShouldEqual, int64(1))
-		So(ToInt64(float32(1), 0), ShouldEqual, int64(1))
-		So(ToInt64(float64(1), 0), ShouldEqual, int64(1))
-		So(ToInt64("1", 0), ShouldEqual, int64(0))
+
+		for idx, test := range []struct {
+			input  interface{}
+			def    []int64
+			output int64
+		}{
+			{int(1), []int64{0}, int64(1)},
+			{int8(1), []int64{0}, int64(1)},
+			{int16(1), []int64{0}, int64(1)},
+			{int32(1), []int64{0}, int64(1)},
+			{int64(1), []int64{0}, int64(1)},
+			{uint(1), []int64{0}, int64(1)},
+			{uint8(1), []int64{0}, int64(1)},
+			{uint16(1), []int64{0}, int64(1)},
+			{uint32(1), []int64{0}, int64(1)},
+			{uint64(1), []int64{0}, int64(1)},
+			{float32(1), []int64{0}, int64(1)},
+			{float64(1), []int64{0}, int64(1)},
+			{"10", []int64{0}, int64(10)},
+			{[]byte("10"), []int64{0}, int64(10)},
+			{"nope", []int64{1010}, 1010},
+			{"nope", nil, math.MaxInt64},
+		} {
+			SoMsg(fmt.Sprintf("test #%d", idx), ToInt64(test.input, test.def...), ShouldEqual, test.output)
+		}
+
 	})
 
 	Convey("ToUint", t, func() {
-		So(ToUint(int(1), 0), ShouldEqual, uint(1))
-		So(ToUint(int8(1), 0), ShouldEqual, uint(1))
-		So(ToUint(int16(1), 0), ShouldEqual, uint(1))
-		So(ToUint(int32(1), 0), ShouldEqual, uint(1))
-		So(ToUint(int64(1), 0), ShouldEqual, uint(1))
-		So(ToUint(uint(1), 0), ShouldEqual, uint(1))
-		So(ToUint(uint8(1), 0), ShouldEqual, uint(1))
-		So(ToUint(uint16(1), 0), ShouldEqual, uint(1))
-		So(ToUint(uint32(1), 0), ShouldEqual, uint(1))
-		So(ToUint(uint64(1), 0), ShouldEqual, uint(1))
-		So(ToUint(float32(1), 0), ShouldEqual, uint(1))
-		So(ToUint(float64(1), 0), ShouldEqual, uint(1))
-		So(ToUint("1", 0), ShouldEqual, uint(0))
+
+		for idx, test := range []struct {
+			input  interface{}
+			def    []uint
+			output uint
+		}{
+			{int(1), []uint{0}, uint(1)},
+			{int8(1), []uint{0}, uint(1)},
+			{int16(1), []uint{0}, uint(1)},
+			{int32(1), []uint{0}, uint(1)},
+			{int64(1), []uint{0}, uint(1)},
+			{uint(1), []uint{0}, uint(1)},
+			{uint8(1), []uint{0}, uint(1)},
+			{uint16(1), []uint{0}, uint(1)},
+			{uint32(1), []uint{0}, uint(1)},
+			{uint64(1), []uint{0}, uint(1)},
+			{float32(1), []uint{0}, uint(1)},
+			{float64(1), []uint{0}, uint(1)},
+			{"10", []uint{0}, uint(10)},
+			{[]byte("10"), []uint{0}, uint(10)},
+			{"nope", []uint{1010}, 1010},
+			{"nope", nil, math.MaxUint},
+		} {
+			SoMsg(fmt.Sprintf("test #%d", idx), ToUint(test.input, test.def...), ShouldEqual, test.output)
+		}
+
 	})
 
 	Convey("ToUint64", t, func() {
-		So(ToUint64(int(1), 0), ShouldEqual, uint64(1))
-		So(ToUint64(int8(1), 0), ShouldEqual, uint64(1))
-		So(ToUint64(int16(1), 0), ShouldEqual, uint64(1))
-		So(ToUint64(int32(1), 0), ShouldEqual, uint64(1))
-		So(ToUint64(int64(1), 0), ShouldEqual, uint64(1))
-		So(ToUint64(uint(1), 0), ShouldEqual, uint64(1))
-		So(ToUint64(uint8(1), 0), ShouldEqual, uint64(1))
-		So(ToUint64(uint16(1), 0), ShouldEqual, uint64(1))
-		So(ToUint64(uint32(1), 0), ShouldEqual, uint64(1))
-		So(ToUint64(uint64(1), 0), ShouldEqual, uint64(1))
-		So(ToUint64(float32(1), 0), ShouldEqual, uint64(1))
-		So(ToUint64(float64(1), 0), ShouldEqual, uint64(1))
-		So(ToUint64("1", 0), ShouldEqual, uint64(0))
+
+		for idx, test := range []struct {
+			input  interface{}
+			def    []uint64
+			output uint64
+		}{
+			{int(1), []uint64{0}, uint64(1)},
+			{int8(1), []uint64{0}, uint64(1)},
+			{int16(1), []uint64{0}, uint64(1)},
+			{int32(1), []uint64{0}, uint64(1)},
+			{int64(1), []uint64{0}, uint64(1)},
+			{uint(1), []uint64{0}, uint64(1)},
+			{uint8(1), []uint64{0}, uint64(1)},
+			{uint16(1), []uint64{0}, uint64(1)},
+			{uint32(1), []uint64{0}, uint64(1)},
+			{uint64(1), []uint64{0}, uint64(1)},
+			{float32(1), []uint64{0}, uint64(1)},
+			{float64(1), []uint64{0}, uint64(1)},
+			{"10", []uint64{0}, uint64(10)},
+			{[]byte("10"), []uint64{0}, uint64(10)},
+			{"nope", []uint64{1010}, 1010},
+			{"nope", nil, math.MaxUint64},
+		} {
+			SoMsg(fmt.Sprintf("test #%d", idx), ToUint64(test.input, test.def...), ShouldEqual, test.output)
+		}
 	})
 
 	Convey("ToFloat64", t, func() {
-		So(ToFloat64(int(1), 0), ShouldEqual, float64(1))
-		So(ToFloat64(int8(1), 0), ShouldEqual, float64(1))
-		So(ToFloat64(int16(1), 0), ShouldEqual, float64(1))
-		So(ToFloat64(int32(1), 0), ShouldEqual, float64(1))
-		So(ToFloat64(int64(1), 0), ShouldEqual, float64(1))
-		So(ToFloat64(uint(1), 0), ShouldEqual, float64(1))
-		So(ToFloat64(uint8(1), 0), ShouldEqual, float64(1))
-		So(ToFloat64(uint16(1), 0), ShouldEqual, float64(1))
-		So(ToFloat64(uint32(1), 0), ShouldEqual, float64(1))
-		So(ToFloat64(uint64(1), 0), ShouldEqual, float64(1))
-		So(ToFloat64(float32(1), 0), ShouldEqual, float64(1))
-		So(ToFloat64(float64(1), 0), ShouldEqual, float64(1))
-		So(ToFloat64("1", 0), ShouldEqual, float64(0))
+
+		for idx, test := range []struct {
+			input  interface{}
+			def    []float64
+			output float64
+		}{
+			{int(1), []float64{0}, float64(1)},
+			{int8(1), []float64{0}, float64(1)},
+			{int16(1), []float64{0}, float64(1)},
+			{int32(1), []float64{0}, float64(1)},
+			{int64(1), []float64{0}, float64(1)},
+			{uint(1), []float64{0}, float64(1)},
+			{uint8(1), []float64{0}, float64(1)},
+			{uint16(1), []float64{0}, float64(1)},
+			{uint32(1), []float64{0}, float64(1)},
+			{uint64(1), []float64{0}, float64(1)},
+			{float32(1), []float64{0}, float64(1)},
+			{float64(1), []float64{0}, float64(1)},
+			{"10", []float64{0}, float64(10)},
+			{[]byte("10"), []float64{0}, float64(10)},
+			{"nope", []float64{1010}, 1010},
+			{"nope", nil, math.MaxFloat64},
+		} {
+			SoMsg(fmt.Sprintf("test #%d", idx), ToFloat64(test.input, test.def...), ShouldEqual, test.output)
+		}
+
 	})
 
 }
