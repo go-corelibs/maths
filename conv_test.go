@@ -62,6 +62,7 @@ func TestAs(t *testing.T) {
 			{[]byte("10"), []int{0}, 10},
 			{"nope", []int{1010}, 1010},
 			{"nope", nil, math.MaxInt},
+			{struct{ string }{"nope"}, nil, math.MaxInt},
 		} {
 			SoMsg(fmt.Sprintf("test #%d", idx), ToInt(test.input, test.def...), ShouldEqual, test.output)
 		}
@@ -91,6 +92,7 @@ func TestAs(t *testing.T) {
 			{[]byte("10"), []int64{0}, int64(10)},
 			{"nope", []int64{1010}, 1010},
 			{"nope", nil, math.MaxInt64},
+			{struct{ string }{"nope"}, nil, math.MaxInt64},
 		} {
 			SoMsg(fmt.Sprintf("test #%d", idx), ToInt64(test.input, test.def...), ShouldEqual, test.output)
 		}
@@ -120,6 +122,7 @@ func TestAs(t *testing.T) {
 			{[]byte("10"), []uint{0}, uint(10)},
 			{"nope", []uint{1010}, 1010},
 			{"nope", nil, math.MaxUint},
+			{struct{ string }{"nope"}, nil, math.MaxUint},
 		} {
 			SoMsg(fmt.Sprintf("test #%d", idx), ToUint(test.input, test.def...), ShouldEqual, test.output)
 		}
@@ -149,6 +152,7 @@ func TestAs(t *testing.T) {
 			{[]byte("10"), []uint64{0}, uint64(10)},
 			{"nope", []uint64{1010}, 1010},
 			{"nope", nil, math.MaxUint64},
+			{struct{ string }{"nope"}, nil, math.MaxUint64},
 		} {
 			SoMsg(fmt.Sprintf("test #%d", idx), ToUint64(test.input, test.def...), ShouldEqual, test.output)
 		}
@@ -177,6 +181,7 @@ func TestAs(t *testing.T) {
 			{[]byte("10"), []float64{0}, float64(10)},
 			{"nope", []float64{1010}, 1010},
 			{"nope", nil, math.MaxFloat64},
+			{struct{ string }{"nope"}, nil, math.MaxFloat64},
 		} {
 			SoMsg(fmt.Sprintf("test #%d", idx), ToFloat64(test.input, test.def...), ShouldEqual, test.output)
 		}

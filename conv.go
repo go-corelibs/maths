@@ -104,6 +104,7 @@ func ToInt(v interface{}, def ...int) int {
 	case []byte:
 		i, err = strconv.Atoi(string(t))
 	default:
+		return math.MaxInt
 	}
 	return toRV(int(i), math.MaxInt, def, err)
 }
@@ -141,6 +142,7 @@ func ToInt64(v interface{}, def ...int64) int64 {
 	case []byte:
 		i, err = strconv.ParseInt(string(t), 10, 64)
 	default:
+		return math.MaxInt64
 	}
 	return toRV(int64(i), math.MaxInt64, def, err)
 }
@@ -178,6 +180,7 @@ func ToUint(v interface{}, def ...uint) uint {
 	case []byte:
 		i, err = strconv.ParseUint(string(t), 10, 64)
 	default:
+		return math.MaxUint
 	}
 	return toRV(uint(i), math.MaxUint, def, err)
 }
@@ -215,6 +218,7 @@ func ToUint64(v interface{}, def ...uint64) uint64 {
 	case []byte:
 		i, err = strconv.ParseUint(string(t), 10, 64)
 	default:
+		return math.MaxUint64
 	}
 	return toRV(i, math.MaxUint64, def, err)
 }
@@ -252,6 +256,7 @@ func ToFloat64(v interface{}, def ...float64) float64 {
 	case []byte:
 		f, err = strconv.ParseFloat(string(t), 64)
 	default:
+		return math.MaxFloat64
 	}
 	return toRV(f, math.MaxFloat64, def, err)
 }
