@@ -14,7 +14,7 @@ maths is a package for general purpose mathematics and other number-type things.
 
 # Examples
 
-## Clamp, ToInt
+## Clamp, ToInt, IntegerLen
 
 ``` go
 func main() {
@@ -22,6 +22,8 @@ func main() {
     // clamped == float64(1.0)
     integer := maths.ToInt(10.0)
     // integer == int(10)
+    count := maths.IntegerLen(1010)
+    // count == 4
 }
 ```
 
