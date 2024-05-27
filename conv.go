@@ -17,6 +17,7 @@ package maths
 import (
 	"fmt"
 	"math"
+	"reflect"
 	"strconv"
 )
 
@@ -31,212 +32,131 @@ func Atoi(v interface{}, def ...int) (number int) {
 	if value, err := strconv.Atoi(s); err == nil {
 		return value
 	}
+	return defRv(math.MaxInt, def)
+}
+
+// ToNumber is a generic function for detecting the arbitrary value (v) type
+// and converting the value (by recasting or by strconv parsing) to another
+// Number type, using reflection to determine the correct means of conversion
+//
+// If the value given cannot be transformed into the requested Number type the
+// "ok" return value will be false. In these cases, if value returned will be
+// either the first def value given or zero
+//
+// Examples:
+//
+//	i, ok := ToNumber[int](struct{string}{"nope"}, 10)
+//	// ok == false; i == int(10)
+//
+//	i, ok := ToNumber[int](struct{string}{"nope"})
+//	// ok == false; i == int(0)
+//
+//	type Thing string
+//	v := Thing("10")
+//	i, ok := ToNumber[int](v)
+//	// ok == true; i == int(10)
+func ToNumber[V Number](v interface{}, def ...V) (value V, ok bool) {
+
+	var sok bool
+	var str string
+
+	rv := reflect.ValueOf(v)
+	if !rv.IsValid() {
+		return 0, false
+	}
+
+	switch rv.Type().Kind() {
+
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		return V(rv.Int()), true
+
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		return V(rv.Uint()), true
+
+	case reflect.Float32, reflect.Float64:
+		return V(rv.Float()), true
+
+	case reflect.String:
+		sok = true
+		str = fmt.Sprintf("%v", rv.Interface())
+
+	case reflect.Slice:
+
+		switch rv.Type().Elem().Kind() {
+		case reflect.Uint8:
+			sok = true
+			str = string(rv.Bytes())
+		}
+
+	}
+
+	if sok {
+		if i, err := strconv.Atoi(str); err == nil {
+			return V(i), true
+		} else if f, err := strconv.ParseFloat(str, 64); err == nil {
+			return V(f), true
+		}
+	}
+
 	if len(def) > 0 {
-		return def[0]
+		return def[0], false
 	}
-	return math.MaxInt
+
+	return
 }
 
-// The To* functions all accept an interface{} value and based on a standard
-// go type switch, recasts int*, uint* and float* values to the type indicated
-// in the function's name. For string and []byte values, strconv functions are
-// used to convert the values into the specific type for the To* function.
-// ie: ToInt converts to `int` and ToFloat64 converts to `float64`
-
+// ToInt is a convenience wrapper around ToNumber with the primary difference
+// that the "counld not convert and no default" case returns math.MaxInt
+// instead of zero
 func ToInt(v interface{}, def ...int) int {
-	var i int
-	var err error
-	switch t := v.(type) {
-	case int:
-		return t
-	case int8:
-		return int(t)
-	case int16:
-		return int(t)
-	case int32:
-		return int(t)
-	case int64:
-		return int(t)
-	case uint:
-		return int(t)
-	case uint8:
-		return int(t)
-	case uint16:
-		return int(t)
-	case uint32:
-		return int(t)
-	case uint64:
-		return int(t)
-	case float32:
-		return int(t)
-	case float64:
-		return int(t)
-	case string:
-		i, err = strconv.Atoi(t)
-	case []byte:
-		i, err = strconv.Atoi(string(t))
-	default:
-		return math.MaxInt
+	if i, ok := ToNumber[int](v); ok {
+		return i
 	}
-	return toRV(int(i), math.MaxInt, def, err)
+	return defRv(math.MaxInt, def)
 }
 
+// ToInt64 is a convenience wrapper around ToNumber with the primary difference
+// that the "counld not convert and no default" case returns math.MaxInt64
+// instead of zero
 func ToInt64(v interface{}, def ...int64) int64 {
-	var i int64
-	var err error
-	switch t := v.(type) {
-	case int:
-		return int64(t)
-	case int8:
-		return int64(t)
-	case int16:
-		return int64(t)
-	case int32:
-		return int64(t)
-	case int64:
-		return t
-	case uint:
-		return int64(t)
-	case uint8:
-		return int64(t)
-	case uint16:
-		return int64(t)
-	case uint32:
-		return int64(t)
-	case uint64:
-		return int64(t)
-	case float32:
-		return int64(t)
-	case float64:
-		return int64(t)
-	case string:
-		i, err = strconv.ParseInt(t, 10, 64)
-	case []byte:
-		i, err = strconv.ParseInt(string(t), 10, 64)
-	default:
-		return math.MaxInt64
+	if i, ok := ToNumber[int64](v); ok {
+		return i
 	}
-	return toRV(int64(i), math.MaxInt64, def, err)
+	return defRv(math.MaxInt64, def)
 }
 
+// ToUint is a convenience wrapper around ToNumber with the primary difference
+// that the "counld not convert and no default" case returns math.MaxUint
+// instead of zero
 func ToUint(v interface{}, def ...uint) uint {
-	var i uint64
-	var err error
-	switch t := v.(type) {
-	case int:
-		return uint(t)
-	case int8:
-		return uint(t)
-	case int16:
-		return uint(t)
-	case int32:
-		return uint(t)
-	case int64:
-		return uint(t)
-	case uint:
-		return t
-	case uint8:
-		return uint(t)
-	case uint16:
-		return uint(t)
-	case uint32:
-		return uint(t)
-	case uint64:
-		return uint(t)
-	case float32:
-		return uint(t)
-	case float64:
-		return uint(t)
-	case string:
-		i, err = strconv.ParseUint(t, 10, 64)
-	case []byte:
-		i, err = strconv.ParseUint(string(t), 10, 64)
-	default:
-		return math.MaxUint
+	if i, ok := ToNumber[uint](v); ok {
+		return i
 	}
-	return toRV(uint(i), math.MaxUint, def, err)
+	return defRv(math.MaxUint, def)
 }
 
+// ToUint64 is a convenience wrapper around ToNumber with the primary
+// difference that the "counld not convert and no default" case returns
+// math.MaxUint64 instead of zero
 func ToUint64(v interface{}, def ...uint64) uint64 {
-	var i uint64
-	var err error
-	switch t := v.(type) {
-	case int:
-		return uint64(t)
-	case int8:
-		return uint64(t)
-	case int16:
-		return uint64(t)
-	case int32:
-		return uint64(t)
-	case int64:
-		return uint64(t)
-	case uint:
-		return uint64(t)
-	case uint8:
-		return uint64(t)
-	case uint16:
-		return uint64(t)
-	case uint32:
-		return uint64(t)
-	case uint64:
-		return t
-	case float32:
-		return uint64(t)
-	case float64:
-		return uint64(t)
-	case string:
-		i, err = strconv.ParseUint(t, 10, 64)
-	case []byte:
-		i, err = strconv.ParseUint(string(t), 10, 64)
-	default:
-		return math.MaxUint64
+	if i, ok := ToNumber[uint64](v); ok {
+		return i
 	}
-	return toRV(i, math.MaxUint64, def, err)
+	return defRv(math.MaxUint64, def)
 }
 
+// ToFloat64 is a convenience wrapper around ToNumber with the primary
+// difference that the "counld not convert and no default" case returns
+// math.MaxFloat64 instead of zero
 func ToFloat64(v interface{}, def ...float64) float64 {
-	var f float64
-	var err error
-	switch t := v.(type) {
-	case int:
-		return float64(t)
-	case int8:
-		return float64(t)
-	case int16:
-		return float64(t)
-	case int32:
-		return float64(t)
-	case int64:
-		return float64(t)
-	case uint:
-		return float64(t)
-	case uint8:
-		return float64(t)
-	case uint16:
-		return float64(t)
-	case uint32:
-		return float64(t)
-	case uint64:
-		return float64(t)
-	case float32:
-		return float64(t)
-	case float64:
-		return t
-	case string:
-		f, err = strconv.ParseFloat(t, 64)
-	case []byte:
-		f, err = strconv.ParseFloat(string(t), 64)
-	default:
-		return math.MaxFloat64
+	if i, ok := ToNumber[float64](v); ok {
+		return i
 	}
-	return toRV(f, math.MaxFloat64, def, err)
+	return defRv(math.MaxFloat64, def)
 }
 
-func toRV[V Number](v, m V, def []V, err error) (value V) {
-	if err == nil {
-		return v
-	} else if len(def) > 0 {
+func defRv[V Number](m V, def []V) (value V) {
+	if len(def) > 0 {
 		return def[0]
 	}
 	return m

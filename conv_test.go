@@ -22,13 +22,59 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-func TestAs(t *testing.T) {
+type tString string
 
+func TestAs(t *testing.T) {
 
 	Convey("Atoi", t, func() {
 		So(Atoi("10"), ShouldEqual, 10)
 		So(Atoi("nope"), ShouldEqual, math.MaxInt)
 		So(Atoi("nope", 1010), ShouldEqual, 1010)
+	})
+
+	Convey("ToNumber", t, func() {
+
+		// inputs: int, uint, float, string, []byte
+		invalid, ok := ToNumber[int](nil)
+		So(ok, ShouldBeFalse)
+		So(invalid, ShouldEqual, 0)
+
+		i2f64, ok := ToNumber[float64](1010)
+		So(ok, ShouldBeTrue)
+		So(i2f64, ShouldEqual, 1010.0)
+
+		u2f64, ok := ToNumber[float64](uint64(1010))
+		So(ok, ShouldBeTrue)
+		So(u2f64, ShouldEqual, 1010.0)
+
+		f2i64, ok := ToNumber[int64](10.01)
+		So(ok, ShouldBeTrue)
+		So(f2i64, ShouldEqual, int64(10))
+
+		s2u64, ok := ToNumber[uint64]("12345")
+		So(ok, ShouldBeTrue)
+		So(s2u64, ShouldEqual, uint64(12345))
+
+		fs2u64, ok := ToNumber[uint64]("12.345")
+		So(ok, ShouldBeTrue)
+		So(fs2u64, ShouldEqual, uint64(12))
+
+		b2f64, ok := ToNumber[float64]([]byte("10"))
+		So(ok, ShouldBeTrue)
+		So(b2f64, ShouldEqual, 10.0)
+
+		ts2f64, ok := ToNumber[float64](tString("10"))
+		So(ok, ShouldBeTrue)
+		So(ts2f64, ShouldEqual, 10.0)
+
+		nope, ok := ToNumber[int](struct{ string }{"nope"})
+		So(ok, ShouldBeFalse)
+		So(nope, ShouldEqual, 0)
+
+		nope, ok = ToNumber[int](struct{ string }{"nope"}, 10)
+		So(ok, ShouldBeFalse)
+		So(nope, ShouldEqual, 10)
+
 	})
 
 	Convey("ToInt", t, func() {
