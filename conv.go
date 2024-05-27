@@ -20,34 +20,6 @@ import (
 	"strconv"
 )
 
-// The As* generic functions all recast their given Number to the standard go
-// types as indicated in the names of the generic functions, ie: AsInt recasts
-// to `int` and AsFloat64 recasts to `float64`
-
-func AsInt[V Number](v V) int {
-	return int(v)
-}
-
-func AsUint[V Number](v V) uint {
-	return uint(v)
-}
-
-func AsInt64[V Number](v V) int64 {
-	return int64(v)
-}
-
-func AsUint64[V Number](v V) uint64 {
-	return uint64(v)
-}
-
-func AsFloat32[V Number](v V) float32 {
-	return float32(v)
-}
-
-func AsFloat64[V Number](v V) float64 {
-	return float64(v)
-}
-
 // Atoi is a wrapper around strconv.Atoi with the given value converted to a
 // string first using fmt.Sprintf with a "%v" replacement
 //

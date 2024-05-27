@@ -24,14 +24,6 @@ import (
 
 func TestAs(t *testing.T) {
 
-	Convey("As Int, Uint, Int64, Uint64, Float32, Float64", t, func() {
-		So(AsInt(10.01), ShouldEqual, int(10))
-		So(AsUint(10.01), ShouldEqual, uint(10))
-		So(AsInt64(10.01), ShouldEqual, int64(10))
-		So(AsUint64(10.01), ShouldEqual, uint64(10))
-		So(AsFloat32(10.01), ShouldEqual, float32(10.01))
-		So(AsFloat64(10.01), ShouldEqual, float64(10.01))
-	})
 
 	Convey("Atoi", t, func() {
 		So(Atoi("10"), ShouldEqual, 10)
